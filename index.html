@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title> 114年中華郵政公司員工運動大會及時比賽分數</title>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: #f4faf7;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #2b7a4b;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 70%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 15px;
+      font-size: 20px;
+    }
+    th {
+      background: #4caf50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>114年中華郵政公司員工運動大會及時比賽分數</h1>
+  <table id="dataTable"></table>
+
+  <script>
+    const sheetId = "1Ag6hYUfxOlUWXDOAaS1IwU2RFvpj-A-TzwYBcHE-2zk"; // ← 改成你的試算表 ID
+    const apiKey = " AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE"; // ← 改成你的 API 金鑰
+    const range = "比賽分數!A:D"; // ← 範圍：工作表名稱+範圍
+
+    async function loadData() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const rows = data.values;
+      if (!rows) return;
+      let html = "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
+      for (let i = 1; i < rows.length; i++) {
+        html += "<tr>" + rows[i].map(c => `<td>${c}</td>`).join("") + "</tr>";
+      }
+      document.getElementById("dataTable").innerHTML = html;
+    }
+
+    loadData();
+    setInterval(loadData, 5000); // 每5秒自動更新
+  </script>
+</body>
+</html>
