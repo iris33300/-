@@ -2,75 +2,69 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>114年中華郵政公司員工運動大會及時比賽分數</title>
+  <title> 114年中華郵政公司員工運動大會及時比賽分數</title>
   <style>
-    /* ====== 整體背景與排版 ====== */
     body {
-      font-family: "Noto Sans TC", "微軟正黑體", sans-serif;
-      background: linear-gradient(180deg, #fff9e6 0%, #fff4d4 100%);
-      color: #444;
+      font-family: "Noto Sans TC","微軟正黑體", sans-serif;
+      background:radial-gradient(circle at center, #000000 70%, #111 100%);
+      color: #fff;
       text-align: center;
       padding: 40px;
     }
-
-    /* ====== 標題 ====== */
     h1 {
-      color: #7b5e00;
-      font-size: 48px;
-      letter-spacing: 4px;
+      color: #00ff88;
+      font-size: 50px;
+      letter-spacing: 5px;
+      text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88;
       margin-bottom: 40px;
-      text-shadow: 0 2px 3px rgba(255, 255, 255, 0.6);
+      animation: glowTitle 2s infinite alternate;
     }
-
-    /* ====== 表格外觀 ====== */
+    @keyframes glowTitle {
+      from { text-shadow: 0 0 10px #00ff88; }
+      to { text-shadow: 0 0 30px #00ffaa, 0 0 60px #00ffaa; }
+    }
     table {
       margin: 0 auto;
       border-collapse: collapse;
       width: 80%;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 15px;
       overflow: hidden;
-      box-shadow: 0 0 20px rgba(200, 180, 80, 0.3);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
     }
-
     th, td {
-      padding: 18px;
-      font-size: 26px;
-      border-bottom: 1px solid rgba(200, 180, 100, 0.3);
+      padding: 20px;
+      font-size: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     th {
-      background: linear-gradient(90deg, #f8d14a, #f6c14a);
-      color: #5a4100;
+      background: linear-gradient(90deg, #00ff88, #00ffaa);
+      color: #000;
       text-shadow: none;
     }
-
     tr:nth-child(even) td {
-      background-color: rgba(255, 250, 220, 0.6);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    tr:hover td {
+      background-color: rgba(0, 255, 136, 0.2);
     }
 
-    tr: hover td {
-      background-color: rgba(255, 235, 150, 0.4);
-      transition: background-color 0.3s ease;
-    }
-
-    /* ====== 分數霓虹效果 ====== */
+    /* 分數霓虹特效 */
     .score {
-      color: #ffae00;
+      color: #00ffcc;
       font-weight: bold;
-      text-shadow: 0 0 8px #ffdc73, 0 0 15px #ffd35a;
+      text-shadow: 0 0 10px #00ffcc, 0 0 30px #00ffcc, 0 0 60px #00ffcc;
       transition: all 0.3s ease;
     }
 
-    /* ====== 更新閃爍動畫（三次） ====== */
+    /* 更新閃爍動畫 */
     .flash {
-      animation: flashGlow 1s ease 3;
+      animation: flashGlow 1s ease;
     }
 
     @keyframes flashGlow {
-      0%   { color: #ffffff; text-shadow: 0 0 15px #fff, 0 0 30px #ffd35a; }
-      50%  { color: #ffae00; text-shadow: 0 0 20px #ffdc73, 0 0 40px #ffd35a; }
-      100% { color: #ffae00; text-shadow: 0 0 10px #ffdc73; }
+      0% { text-shadow: 0 0 10px #fff, 0 0 20px #0ff; color: #fff; }
+      100% { text-shadow: 0 0 10px #00ffcc, 0 0 30px #00ffcc; color: #00ffcc; }
     }
   </style>
 </head>
@@ -80,7 +74,7 @@
 
   <script>
     const sheetId = "1Ag6hYUfxOlUWXDOAaS1IwU2RFvpj-A-TzwYBcHE-2zk"; // ← 改成你的試算表 ID
-    const apiKey = "AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE";  // ← 改成你的 API 金鑰
+    const apiKey = " AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE"; // ← 改成你的 API 金鑰
     const range = "比賽分數!A:D"; // ← 範圍：工作表名稱+範圍
 
     let oldData = [];
