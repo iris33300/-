@@ -2,36 +2,75 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title> 114年中華郵政公司員工運動大會及時比賽分數</title>
+  <title>114年中華郵政公司員工運動大會及時比賽分數</title>
   <style>
+    /* ====== 整體背景與排版 ====== */
     body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: #f4faf7;
-      color: #333;
+      font-family: "Noto Sans TC", "微軟正黑體", sans-serif;
+      background: linear-gradient(180deg, #fff9e6 0%, #fff4d4 100%);
+      color: #444;
       text-align: center;
       padding: 40px;
     }
+
+    /* ====== 標題 ====== */
     h1 {
-      color: #2b7a4b;
+      color: #7b5e00;
+      font-size: 48px;
+      letter-spacing: 4px;
+      margin-bottom: 40px;
+      text-shadow: 0 2px 3px rgba(255, 255, 255, 0.6);
     }
+
+    /* ====== 表格外觀 ====== */
     table {
       margin: 0 auto;
       border-collapse: collapse;
-      width: 70%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      background: white;
+      width: 80%;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(200, 180, 80, 0.3);
     }
+
     th, td {
-      border: 1px solid #ddd;
-      padding: 15px;
-      font-size: 20px;
+      padding: 18px;
+      font-size: 26px;
+      border-bottom: 1px solid rgba(200, 180, 100, 0.3);
     }
+
     th {
-      background: #4caf50;
-      color: white;
+      background: linear-gradient(90deg, #f8d14a, #f6c14a);
+      color: #5a4100;
+      text-shadow: none;
     }
-    tr:nth-child(even) {
-      background: #f9f9f9;
+
+    tr:nth-child(even) td {
+      background-color: rgba(255, 250, 220, 0.6);
+    }
+
+    tr: hover td {
+      background-color: rgba(255, 235, 150, 0.4);
+      transition: background-color 0.3s ease;
+    }
+
+    /* ====== 分數霓虹效果 ====== */
+    .score {
+      color: #ffae00;
+      font-weight: bold;
+      text-shadow: 0 0 8px #ffdc73, 0 0 15px #ffd35a;
+      transition: all 0.3s ease;
+    }
+
+    /* ====== 更新閃爍動畫（三次） ====== */
+    .flash {
+      animation: flashGlow 1s ease 3;
+    }
+
+    @keyframes flashGlow {
+      0%   { color: #ffffff; text-shadow: 0 0 15px #fff, 0 0 30px #ffd35a; }
+      50%  { color: #ffae00; text-shadow: 0 0 20px #ffdc73, 0 0 40px #ffd35a; }
+      100% { color: #ffae00; text-shadow: 0 0 10px #ffdc73; }
     }
   </style>
 </head>
@@ -41,20 +80,34 @@
 
   <script>
     const sheetId = "1Ag6hYUfxOlUWXDOAaS1IwU2RFvpj-A-TzwYBcHE-2zk"; // ← 改成你的試算表 ID
-    const apiKey = " AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE"; // ← 改成你的 API 金鑰
+    const apiKey = "AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE";  // ← 改成你的 API 金鑰
     const range = "比賽分數!A:D"; // ← 範圍：工作表名稱+範圍
 
+    let oldData = [];
+
     async function loadData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const rows = data.values;
-      if (!rows) return;
-      let html = "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
-      for (let i = 1; i < rows.length; i++) {
-        html += "<tr>" + rows[i].map(c => `<td>${c}</td>`).join("") + "</tr>";
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const rows = data.values;
+        if (!rows) return;
+
+        let html = "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+        for (let i = 1; i < rows.length; i++) {
+          html += "<tr>" + rows[i].map((c, j) => {
+            const oldVal = oldData[i]?.[j] || "";
+            const changed = c !== oldVal && j === 3; // 假設第4欄是分數
+            return `<td class="${j === 3 ? 'score' : ''} ${changed ? 'flash' : ''}">${c}</td>`;
+          }).join("") + "</tr>";
+        }
+
+        document.getElementById("dataTable").innerHTML = html;
+        oldData = rows;
+      } catch (err) {
+        console.error("讀取試算表錯誤：", err);
       }
-      document.getElementById("dataTable").innerHTML = html;
     }
 
     loadData();
