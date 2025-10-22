@@ -1,111 +1,188 @@
-﻿<!DOCTYPE html>
-<html lang="zh-TW">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title> 114年中華郵政公司員工運動大會及時比賽分數</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC","微軟正黑體", sans-serif;
-      background:radial-gradient(circle at center, #000000 70%, #111 100%);
-      color: #fff;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 {
-      color: #00ff88;
-      font-size: 50px;
-      letter-spacing: 5px;
-      text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88;
-      margin-bottom: 40px;
-      animation: glowTitle 2s infinite alternate;
-    }
-    @keyframes glowTitle {
-      from { text-shadow: 0 0 10px #00ff88; }
-      to { text-shadow: 0 0 30px #00ffaa, 0 0 60px #00ffaa; }
-    }
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 80%;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>各項競賽成績即時看板</title>
+<style>
+  body {
+    background: #fff8dc;
+    color: #333;
+    font-family: "Noto Sans TC", sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* 📍頂部標題列 */
+  header {
+    background: linear-gradient(90deg, #ffec8b, #ffe57f);
+    color: #333;
+    text-align: center;
+    padding: 20px 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  header img {
+    height: 50px;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
+
+  header h1 {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.8em;
+    margin: 0;
+    font-weight: 700;
+  }
+
+  /* 📊 表格樣式 */
+  main {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  table {
+    width: 95%;
+    max-width: 800px;
+    border-collapse: collapse;
+    background: #fffef9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  th {
+    background: #ffdd66;
+    color: #333;
+    font-weight: bold;
+    padding: 12px;
+    font-size: 1.2em;
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1em;
+  }
+
+  tr:nth-child(even) {
+    background: #fff9e0;
+  }
+
+  /* 🎇 分數霓虹效果 */
+  .score {
+    font-weight: bold;
+    text-align: center;
+    transition: text-shadow 0.3s;
+  }
+
+  .flash {
+    animation: flash 0.6s ease-in-out 3;
+  }
+
+  @keyframes flash {
+    0%, 100% { text-shadow: 0 0 0px #fff; color: #333; }
+    50% { text-shadow: 0 0 12px #ff9900, 0 0 20px #ffcc00; color: #ff6600; }
+  }
+
+  /* 📱 手機自適應 */
+  @media (max-width: 600px) {
     th, td {
-      padding: 20px;
-      font-size: 30px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      font-size: 1em;
     }
-    th {
-      background: linear-gradient(90deg, #00ff88, #00ffaa);
-      color: #000;
-      text-shadow: none;
+    header h1 {
+      font-size: 1.4em;
     }
-    tr:nth-child(even) td {
-      background-color: rgba(255, 255, 255, 0.05);
+    header img {
+      height: 36px;
     }
-    tr:hover td {
-      background-color: rgba(0, 255, 136, 0.2);
-    }
-
-    /* 分數霓虹特效 */
-    .score {
-      color: #00ffcc;
-      font-weight: bold;
-      text-shadow: 0 0 10px #00ffcc, 0 0 30px #00ffcc, 0 0 60px #00ffcc;
-      transition: all 0.3s ease;
-    }
-
-    /* 更新閃爍動畫 */
-    .flash {
-      animation: flashGlow 1s ease;
-    }
-
-    @keyframes flashGlow {
-      0% { text-shadow: 0 0 10px #fff, 0 0 20px #0ff; color: #fff; }
-      100% { text-shadow: 0 0 10px #00ffcc, 0 0 30px #00ffcc; color: #00ffcc; }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <h1>114年中華郵政公司員工運動大會及時比賽分數</h1>
-  <table id="dataTable"></table>
+  <header>
+    
+    <h1>🏆114年中華郵政公司員工運動大會競賽成績即時看板</h1>
+  </header>
 
-  <script>
-    const sheetId = "1Ag6hYUfxOlUWXDOAaS1IwU2RFvpj-A-TzwYBcHE-2zk"; // ← 改成你的試算表 ID
-    const apiKey = " AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE"; // ← 改成你的 API 金鑰
-    const range = "比賽分數!A:D"; // ← 範圍：工作表名稱+範圍
+  <main>
+    <table id="scoreTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </main>
 
-    let oldData = [];
+<script>
+const apiUrl = "https://script.google.com/macros/s/AKfycbzxw4ZAm4GnxGy-pdQke1WGMaT5aH-WVzGhDfhPWGYowBMa2H2w8I4LVREpY1HAvREJ/exec"; // ← 請換成你的 Apps Script 網址
 
-    async function loadData() {
-      try {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const rows = data.values;
-        if (!rows) return;
+let lastScores = [];
 
-        let html = "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
+async function loadScores() {
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    const rows = data.rows;
+    if (!rows || rows.length === 0) return;
 
-        for (let i = 1; i < rows.length; i++) {
-          html += "<tr>" + rows[i].map((c, j) => {
-            const oldVal = oldData[i]?.[j] || "";
-            const changed = c !== oldVal && j === 3; // 假設第4欄是分數
-            return `<td class="${j === 3 ? 'score' : ''} ${changed ? 'flash' : ''}">${c}</td>`;
-          }).join("") + "</tr>";
-        }
+    const table = document.getElementById("scoreTable");
+    const thead = table.querySelector("thead");
+    const tbody = table.querySelector("tbody");
 
-        document.getElementById("dataTable").innerHTML = html;
-        oldData = rows;
-      } catch (err) {
-        console.error("讀取試算表錯誤：", err);
-      }
+    // 標題列
+    thead.innerHTML = "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+    // 資料列
+    tbody.innerHTML = "";
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i].every(c => c === "")) continue; // 跳過空列
+      const tr = document.createElement("tr");
+      rows[i].forEach((cell, idx) => {
+        const td = document.createElement("td");
+        if (idx === rows[i].length - 1) td.classList.add("score");
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
     }
 
-    loadData();
-    setInterval(loadData, 5000); // 每5秒自動更新
-  </script>
+    lastScores = rows.map(r => r[r.length - 1]);
+  } catch (err) {
+    console.error("資料載入失敗", err);
+  }
+}
+
+async function updateScores() {
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    const rows = data.rows;
+
+    const tbody = document.querySelector("#scoreTable tbody");
+    const trs = tbody.querySelectorAll("tr");
+
+    for (let i = 1; i < rows.length; i++) {
+      const newScore = rows[i][rows[i].length - 1];
+      const tr = trs[i - 1];
+      if (!tr) continue;
+      const td = tr.querySelector(".score");
+      const oldScore = lastScores[i];
+      if (newScore !== oldScore) {
+        td.textContent = newScore;
+        td.classList.add("flash");
+        setTimeout(() => td.classList.remove("flash"), 1800); // 閃爍3次
+      }
+    }
+    lastScores = rows.map(r => r[r.length - 1]);
+  } catch (err) {
+    console.error("更新錯誤", err);
+  }
+}
+
+loadScores();
+setInterval(updateScores, 5000); // 每5秒更新一次
+</script>
 </body>
 </html>
