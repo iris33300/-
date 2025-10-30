@@ -112,7 +112,7 @@
   <div id="tables"></div>
 
   <script>
-    const apiUrl = "https://script.google.com/macros/s/AKfycbwGaZ2kGZifDq7fEZuKA9MvWh36omjaPqWjWCPaKD37OOWulqLzg1OkgM-Gpd4V7ENs/exec";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzSJocYsBhwGkdeBD23nbnDCc69oueOvMupBsAyIE8oeK8DNKJbpR2josGjn_9T_Mts/exec";
 
     let oldData = {};
 
@@ -138,6 +138,8 @@
         let first = true;
 
         for (const [sheetName, sheetData] of Object. entries(data)) {
+          if (sheetName === "_lastUpdate") continue; // 跳過這個欄位
+
           const tab = document.createElement("div");
           tab.className = "tab" + (first ? " active": "");
           tab.textContent = sheetName;
