@@ -105,6 +105,9 @@
 </head>
 <body>
   <h1>114年中華郵政公司員工運動大會即時比賽分數</h1>
+  <p id="updateTime" style="font-size:18px; color:#666; margin-top:-10px; margin-bottom:20px;">
+  ⏱️ 資料更新時間：載入中...
+  </p>
   <div id="tabs" class="tabs"></div>
   <div id="tables"></div>
 
@@ -117,6 +120,12 @@
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
+
+        // 顯示最後更新時間
+        if (data._lastUpdate) {
+        const updateElem = document.getElementById("updateTime");
+        updateElem.textContent = "⏱️ 資料更新時間：" + data._lastUpdate;
+        }
 
         if (!data) return;
 
@@ -183,7 +192,7 @@
     }
 
     loadData();
-    setInterval(loadData, 30000); // 每 10 秒更新一次
+    setInterval(loadData, 30000); // 每 30 秒更新一次
   </script>
 </body>
 </html>
