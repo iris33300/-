@@ -1,173 +1,189 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>比賽成績看板</title>
-<style>
-  body {
-    font-family: "Noto Sans TC", sans-serif;
-    background-color: #fffbea;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    color: #2b6cb0;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-  .event {
-    background: #ffffff;
-    margin: 30px auto;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    width: 95%;
-    max-width: 1200px;
-    text-align: center;
-    transition: background-color 0.6s ease;
-  }
-  h2 {
-    text-align: center;
-    margin-bottom: 5px;
-    color: #1a202c;
-  }
-  .status {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 15px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    font-size: 16px;
-  }
-  th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-  }
-  th {
-    background-color: #e2e8f0;
-  }
-  .not-started {
-    background-color: #f1f5f9;
-  }
-  .in-progress {
-    background-color: #fef3c7;
-  }
-  .finished {
-    background-color: #dcfce7;
-  }
-  .status.not-started {
-    background-color: #cbd5e1;
-    color: #1a202c;
-  }
-  .status.in-progress {
-    background-color: #f6ad55;
-    color: #fff;
-  }
-  .status.finished {
-    background-color: #48bb78;
-    color: #fff;
-  }
-  @media (max-width: 768px) {
+  <meta charset="UTF-8">
+  <title>運動會即時比賽成績看板</title>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: #fff8e7; /* 柔和黃底 */
+      color: #333;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      text-align: center;
+      color: #3c3c3c;
+      font-size: 2.5em;
+      margin: 20px 0;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      background: #ffe9b3;
+      border-bottom: 2px solid #f2c94c;
+    }
+    .tab {
+      padding: 10px 18px;
+      margin: 3px;
+      border-radius: 8px 8px 0 0;
+      background: #fbe3a2;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.25s;
+    }
+    .tab:hover {
+      background: #ffd76b;
+    }
+    .tab.active {
+      background: #f2c94c;
+      color: #000;
+      box-shadow: inset 0 -3px 0 #ffb700;
+    }
+    .table-container {
+      width: 95%;
+      margin: 0 auto 30px;
+      display: none;
+      overflow-x: auto;
+      transition: all 0.3s;
+    }
+    .table-container.active {
+      display: block;
+    }
     table {
-      font-size: 14px;
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 800px;
+      background: white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      border-radius: 10px;
     }
     th, td {
-      padding: 6px;
+      border: 1px solid #ddd;
+      padding: 10px 12px;
+      font-size: 18px;
+      text-align: center;
     }
-    .event {
-      padding: 15px;
+    th {
+      background: #fff2b0;
     }
-  }
-</style>
+    tr:nth-child(even) {
+      background: #fffaf0;
+    }
+
+    /* 狀態顏色 */
+    .status-未開賽 table {
+      border: 3px solid #ccc;
+      background: #f5f5f5;
+    }
+    .status-競賽進行中 table {
+      border: 3px solid #ffb84d;
+      background: #fff4e1;
+    }
+    .status-比賽結束 table {
+      border: 3px solid #79d279;
+      background: #ecfff0;
+    }
+
+    /* 分數閃爍效果 */
+    .score-flash {
+      animation: flashNeon 0.3s ease-in-out 3;
+    }
+    @keyframes flashNeon {
+      0%, 100% { color: #000; text-shadow: none; }
+      50% { color: #ff9800; text-shadow: 0 0 12px #ffb74d, 0 0 20px #ffcc80; }
+    }
+
+    @media screen and (max-width: 768px) {
+      th, td { font-size: 14px; padding: 6px; }
+      h1 { font-size: 1.8em; }
+    }
+  </style>
 </head>
 <body>
-  <h1>🏆114年中華郵政公司員工運動大會即時比賽分數🏆</h1>
-  <div id="scoreboards"></div>
+  <h1>114年中華郵政公司員工運動大會即時比賽分數</h1>
+  <div id="tabs" class="tabs"></div>
+  <div id="tables"></div>
 
-<script>
-const spreadsheetId = "1Ag6hYUfxOlUWXDOAaS1IwU2RFvpj-A-TzwYBcHE-2zk"; // ← 你的試算表 ID
-const apiKey = "AIzaSyBaFMgU731qwOccXJ0e0MGAAqxmzihDWOE";       // ← 換成你的 Google Sheets API 金鑰
+  <script>
+    const apiUrl = "https://script.google.com/macros/s/AKfycbwGaZ2kGZifDq7fEZuKA9MvWh36omjaPqWjWCPaKD37OOWulqLzg1OkgM-Gpd4V7ENs/exec";
 
-const sheetSettings = [
-  { name: "女子百米", range: "A:I" },
-  { name: "男甲百米", range: "A:I" },
-  { name: "男乙百米", range: "A:I" },
-  { name: "四百混和", range: "A:I" },
-  { name: "持球競快", range: "A:I" },
-  { name: "郵投必中", range: "A:I" },
-  { name: "郵運昌隆", range: "A:I" },
-  { name: "滿載而歸", range: "A:I" },
-  { name: "好運降臨", range: "A:I" },
-  { name: "大隊接力", range: "A:H" },
-  { name: "拔河比賽", range: "A:F" },
-  { name: "團體總成績", range: "A:P" },
-];
+    let oldData = {};
 
-// 狀態對應樣式
-function getStatusClass(statusText) {
-  if (!statusText) return "not-started";
-  if (statusText.includes("競賽進行中")) return "in-progress";
-  if (statusText.includes("比賽結束")) return "finished";
-  return "not-started";
-}
+    async function loadData() {
+      try {
+        const res = await fetch(apiUrl);
+        const data = await res.json();
 
-// 從 Google Sheets 取得資料
-async function fetchSheetData(sheetName, range) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(sheetName)}!${range}?key=${apiKey}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.values || [];
-}
+        if (!data) return;
 
-async function loadScoreboards() {
-  const container = document.getElementById("scoreboards");
-  container.innerHTML = "";
+        const tabsContainer = document.getElementById("tabs");
+        const tablesContainer = document.getElementById("tables");
 
-  for (const sheet of sheetSettings) {
-    const values = await fetchSheetData(sheet.name, sheet.range);
-    if (!values.length) continue;
+        tabsContainer.innerHTML = "";
+        tablesContainer.innerHTML = "";
 
-    const [headers, ...rows] = values;
-    const statusIndex = headers.indexOf("狀態") !== -1 ? headers.indexOf("狀態") : headers.length - 1;
+        let first = true;
 
-    // 取得狀態值
-    let statusText = "";
-    if (rows[0] && rows[0][statusIndex]) {
-      statusText = rows[0][statusIndex];
+        for (const [sheetName, sheetData] of Object.entries(data)) {
+          const tab = document.createElement("div");
+          tab.className = "tab" + (first ? " active" : "");
+          tab.textContent = sheetName;
+          tab.dataset.target = sheetName;
+          tabsContainer.appendChild(tab);
+
+          const tableWrapper = document.createElement("div");
+          tableWrapper.className = "table-container" + (first ? " active" : "");
+          tableWrapper.id = sheetName;
+
+          const statusText = (sheetData.status || "").trim();
+          if (statusText) {
+            tableWrapper.classList.add(`status-${statusText}`);
+          }
+
+          let html = "<table><thead><tr>";
+          sheetData.headers.slice(0, sheetName === "團體總成績" ? 15 : 8).forEach(h => {
+            html += `<th>${h}</th>`;
+          });
+          html += "</tr></thead><tbody>";
+
+          sheetData.rows.forEach((r, i) => {
+            html += "<tr>";
+            r.slice(0, sheetName === "團體總成績" ? 15 : 8).forEach((c, j) => {
+              const cellId = `${sheetName}_${i}_${j}`;
+              const prevVal = oldData[cellId];
+              const changed = prevVal && prevVal !== c;
+              html += `<td class="${changed ? 'score-flash' : ''}">${c}</td>`;
+              oldData[cellId] = c;
+            });
+            html += "</tr>";
+          });
+          html += "</tbody></table>";
+
+          tableWrapper.innerHTML = html;
+          tablesContainer.appendChild(tableWrapper);
+          first = false;
+        }
+
+        document.querySelectorAll(".tab").forEach(tab => {
+          tab.onclick = () => {
+            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".table-container").forEach(tc => tc.classList.remove("active"));
+            tab.classList.add("active");
+            document.getElementById(tab.dataset.target).classList.add("active");
+          };
+        });
+
+      } catch (err) {
+        console.error("載入資料錯誤：", err);
+      }
     }
 
-    const statusClass = getStatusClass(statusText);
-
-    // 不顯示狀態欄
-    const visibleHeaders = headers.filter((_, i) => i !== statusIndex);
-    const visibleRows = rows.map(r => r.filter((_, i) => i !== statusIndex));
-
-    const tableHTML = `
-      <div class="event ${statusClass}">
-        <h2>${sheet.name}</h2>
-        <div class="status ${statusClass}">狀態：${statusText || "未開賽"}</div>
-        <table>
-          <thead><tr>${visibleHeaders.map(h => `<th>${h}</th>`).join("")}</tr></thead>
-          <tbody>${visibleRows.map(r => `<tr>${r.map(c => `<td>${c || ""}</td>`).join("")}</tr>`).join("")}</tbody>
-        </table>
-      </div>
-    `;
-    container.innerHTML += tableHTML;
-  }
-}
-
-// 初始化載入與每 30 秒自動刷新
-loadScoreboards();
-setInterval(loadScoreboards, 30000);
-</script>
+    loadData();
+    setInterval(loadData, 10000); // 每 10 秒更新一次
+  </script>
 </body>
 </html>
