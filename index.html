@@ -35,7 +35,7 @@
       font-weight: 600;
       transition: all 0.25s;
     }
-    .tab:hover {
+    .tab: hover {
       background: #ffd76b;
     }
     .tab.active {
@@ -128,15 +128,15 @@
 
         let first = true;
 
-        for (const [sheetName, sheetData] of Object.entries(data)) {
+        for (const [sheetName, sheetData] of Object. entries(data)) {
           const tab = document.createElement("div");
-          tab.className = "tab" + (first ? " active" : "");
+          tab.className = "tab" + (first ? " active": "");
           tab.textContent = sheetName;
           tab.dataset.target = sheetName;
           tabsContainer.appendChild(tab);
 
           const tableWrapper = document.createElement("div");
-          tableWrapper.className = "table-container" + (first ? " active" : "");
+          tableWrapper.className = "table-container" + (first ? " active": "");
           tableWrapper.id = sheetName;
 
           const statusText = (sheetData.status || "").trim();
@@ -183,7 +183,7 @@
     }
 
     loadData();
-    setInterval(loadData, 10000); // 每 10 秒更新一次
+    setInterval(loadData, 30000); // 每 10 秒更新一次
   </script>
 </body>
 </html>
