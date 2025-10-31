@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: "Noto Sans TC", sans-serif;
-      background: #fff8e7; /* 柔和黃底 */
+      background: #fff8e7;
       color: #333;
       margin: 0;
       padding: 0;
@@ -35,7 +35,7 @@
       font-weight: 600;
       transition: all 0.25s;
     }
-    .tab: hover {
+    .tab:hover {
       background: #ffd76b;
     }
     .tab.active {
@@ -48,7 +48,6 @@
       margin: 0 auto 30px;
       display: none;
       overflow-x: auto;
-      transition: all 0.3s;
     }
     .table-container.active {
       display: block;
@@ -74,24 +73,11 @@
       background: #fffaf0;
     }
 
-    /* 狀態顏色 */
-    .status-未開賽 table {
-      border: 3px solid #ccc;
-      background: #f5f5f5;
-    }
-    .status-競賽進行中 table {
-      border: 3px solid #ffb84d;
-      background: #fff4e1;
-    }
-    .status-比賽結束 table {
-      border: 3px solid #79d279;
-      background: #ecfff0;
-    }
+    .status-未開賽 table { border: 3px solid #ccc; background: #f5f5f5; }
+    .status-競賽進行中 table { border: 3px solid #ffb84d; background: #fff4e1; }
+    .status-比賽結束 table { border: 3px solid #79d279; background: #ecfff0; }
 
-    /* 分數閃爍效果 */
-    .score-flash {
-      animation: flashNeon 0.3s ease-in-out 3;
-    }
+    .score-flash { animation: flashNeon 0.3s ease-in-out 3; }
     @keyframes flashNeon {
       0%, 100% { color: #000; text-shadow: none; }
       50% { color: #ff9800; text-shadow: 0 0 12px #ffb74d, 0 0 20px #ffcc80; }
@@ -105,27 +91,17 @@
 </head>
 <body>
   <h1>114年中華郵政公司員工運動大會即時比賽分數</h1>
-  <p id="updateTime" style="font-size:18px; color:#666; margin-top:-10px; margin-bottom:20px;">
-  ⏱️ 資料更新時間：載入中...
-  </p>
   <div id="tabs" class="tabs"></div>
   <div id="tables"></div>
 
   <script>
-    const apiUrl = "https://script.google.com/macros/s/AKfycbzSJocYsBhwGkdeBD23nbnDCc69oueOvMupBsAyIE8oeK8DNKJbpR2josGjn_9T_Mts/exec";
-
+    const apiUrl = "https://script.google.com/macros/s/AKfycbwIBAD-aQo8tPoDCZ0PL_d6rhMJAlzg4QPcJtvRVQ4GCY7T_4TPlR6iZblgoIbxNAx9/exec";
     let oldData = {};
 
     async function loadData() {
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
-
-        // 顯示最後更新時間
-        if (data._lastUpdate) {
-        const updateElem = document.getElementById("updateTime");
-        updateElem.textContent = "⏱️ 資料更新時間：" + data._lastUpdate;
-        }
 
         if (!data) return;
 
@@ -137,17 +113,15 @@
 
         let first = true;
 
-        for (const [sheetName, sheetData] of Object. entries(data)) {
-          if (sheetName === "_lastUpdate") continue; // 跳過這個欄位
-
+        for (const [sheetName, sheetData] of Object.entries(data)) {
           const tab = document.createElement("div");
-          tab.className = "tab" + (first ? " active": "");
+          tab.className = "tab" + (first ? " active" : "");
           tab.textContent = sheetName;
           tab.dataset.target = sheetName;
           tabsContainer.appendChild(tab);
 
           const tableWrapper = document.createElement("div");
-          tableWrapper.className = "table-container" + (first ? " active": "");
+          tableWrapper.className = "table-container" + (first ? " active" : "");
           tableWrapper.id = sheetName;
 
           const statusText = (sheetData.status || "").trim();
@@ -194,7 +168,7 @@
     }
 
     loadData();
-    setInterval(loadData, 30000); // 每 30 秒更新一次
+    setInterval(loadData, 30000); // 每30秒自動更新
   </script>
 </body>
 </html>
